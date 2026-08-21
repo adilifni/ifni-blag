@@ -11,6 +11,7 @@
       --text: #c9d1d9;
       --border: #30363d;
       --accent: #58a6ff;
+      --danger: #f85149;
     }
     body {
       margin: 0;
@@ -19,122 +20,103 @@
       background-color: var(--bg);
       color: var(--text);
     }
-    .header {
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 1.25rem;
-      color: var(--accent);
-    }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h1 { margin: 0; font-size: 1.2rem; color: var(--accent); }
     
-    /* شريط تنقل الأجزاء */
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
+    .nav-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
     .tab-btn {
-      flex: 1;
-      padding: 10px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 0.85rem;
+      flex: 1; padding: 8px; background: var(--card-bg);
+      border: 1px solid var(--border); color: var(--text);
+      border-radius: 6px; font-weight: bold; font-size: 0.8rem;
     }
-    .tab-btn.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-    /* جدول التوقعات الأفقي المماثل لـ Windguru */
     .table-container {
-      overflow-x: auto;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px;
+      overflow-x: auto; background: var(--card-bg);
+      border: 1px solid var(--border); border-radius: 8px; padding: 4px;
     }
-    .forecast-table {
-      border-collapse: collapse;
-      width: 100%;
-      text-align: center;
-      white-space: nowrap;
-      font-size: 0.8rem;
-    }
-    .forecast-table th, .forecast-table td {
-      padding: 6px 8px;
-      border: 1px solid var(--border);
-    }
-    .row-title {
-      position: sticky;
-      right: 0;
-      background: var(--card-bg);
-      font-weight: bold;
-      text-align: right;
-      z-index: 2;
-    }
+    .forecast-table { border-collapse: collapse; width: 100%; text-align: center; white-space: nowrap; font-size: 0.75rem; }
+    .forecast-table th, .forecast-table td { padding: 6px; border: 1px solid var(--border); }
+    .row-title { position: sticky; right: 0; background: var(--card-bg); font-weight: bold; text-align: right; z-index: 2; }
     
-    /* ألوان خلايا الرياح والبحر */
+    .day-header { background: #21262d; color: var(--accent); font-weight: bold; }
     .wind-low { background-color: #2da44e; color: #fff; }
     .wind-med { background-color: #e3b341; color: #000; }
     .wind-high { background-color: #cf222e; color: #fff; }
-    .arrow { display: inline-block; font-weight: bold; }
+    .tide-high { color: #38bdf8; font-weight: bold; }
+    .tide-low { color: #f43f5e; font-weight: bold; }
+
+    /* شاشة الخطأ عند انقطاع الإنترنت */
+    #no-internet-screen {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--bg);
+      z-index: 9999;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .offline-icon { font-size: 3rem; margin-bottom: 16px; color: var(--danger); }
+    .offline-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 8px; }
+    .offline-desc { font-size: 0.9rem; color: #8b949e; margin-bottom: 20px; }
+    .retry-btn {
+      padding: 10px 24px;
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>سيدي إفني - توقعات الأيام القادمة</h1>
+  <!-- شاشة التنبيه بعدم وجود إنترنت -->
+  <div id="no-internet-screen">
+    <div class="offline-icon">⚠️</div>
+    <div class="offline-title">لا يوجد اتصال بالإنترنت</div>
+    <div class="offline-desc">يرجى الاتصال بالشبكة للاطلاع على توقعات الطقس وحالة البحر المباشرة.</div>
+    <button class="retry-btn" onclick="checkAndLoad()">إعادة المحاولة</button>
   </div>
 
-  <!-- أزرار التبديل بين أجزاء المشروع -->
-  <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchSection('all')">الكل</button>
-    <button class="tab-btn" onclick="switchSection('weather')">الطقس والرياح</button>
-    <button class="tab-btn" onclick="switchSection('marine')">حالة البحر</button>
-  </div>
+  <div id="main-content">
+    <div class="header">
+      <h1>توقعات سيدي إفني (7 أيام)</h1>
+    </div>
 
-  <div class="table-container">
-    <table class="forecast-table">
-      <thead>
-        <tr id="row-hours">
-          <th class="row-title">الساعة</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- جزء الطقس والرياح -->
-        <tr id="row-temp" class="sec-weather">
-          <td class="row-title">الحرارة °C</td>
-        </tr>
-        <tr id="row-wind" class="sec-weather">
-          <td class="row-title">الرياح (عقدة)</td>
-        </tr>
-        <tr id="row-dir" class="sec-weather">
-          <td class="row-title">اتجاه الرياح</td>
-        </tr>
-        
-        <!-- جزء حالة البحر -->
-        <tr id="row-wave" class="sec-marine">
-          <td class="row-title">الموج (متر)</td>
-        </tr>
-        <tr id="row-period" class="sec-marine">
-          <td class="row-title">فترة الموج (ث)</td>
-        </tr>
-        
-        <!-- جزء المد والجزر -->
-        <tr id="row-tide" class="sec-tide">
-          <td class="row-title">المد والجزر</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchSection('all')">الكل</button>
+      <button class="tab-btn" onclick="switchSection('weather')">الطقس والرياح</button>
+      <button class="tab-btn" onclick="switchSection('marine')">البحر والمد</button>
+    </div>
 
-  <div id="status" style="text-align:center; margin-top:12px; font-size:0.8rem;">جاري جلب التوقعات...</div>
+    <div class="table-container">
+      <table class="forecast-table">
+        <thead>
+          <tr id="row-days">
+            <th class="row-title">اليوم</th>
+          </tr>
+          <tr id="row-hours">
+            <th class="row-title">الساعة</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="row-temp" class="sec-weather"><td class="row-title">الحرارة °C</td></tr>
+          <tr id="row-wind" class="sec-weather"><td class="row-title">الرياح (عقدة)</td></tr>
+          <tr id="row-dir" class="sec-weather"><td class="row-title">اتجاه الرياح</td></tr>
+          <tr id="row-wave" class="sec-marine"><td class="row-title">الموج (متر)</td></tr>
+          <tr id="row-period" class="sec-marine"><td class="row-title">فترة الموج (ث)</td></tr>
+          <tr id="row-tide" class="sec-marine"><td class="row-title">المد والجزر</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="status" style="text-align:center; margin-top:12px; font-size:0.8rem; color:#8b949e;">جاري جلب البيانات...</div>
+  </div>
 
   <script src="cordova.js"></script>
   <script src="js/index.js"></script>
