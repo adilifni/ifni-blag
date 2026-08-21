@@ -1,114 +1,142 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>طقس سيدي إفني والبحر</title>
+  <title>Windguru Sidi Ifni</title>
   <style>
     :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --accent: #38bdf8;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --text: #c9d1d9;
+      --border: #30363d;
+      --accent: #58a6ff;
     }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-color);
+      padding: 12px;
+      font-family: -apple-system, system-ui, sans-serif;
+      background-color: var(--bg);
       color: var(--text);
-      padding: 16px;
     }
     .header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
     .header h1 {
       margin: 0;
-      color: var(--accent);
-      font-size: 1.5rem;
-    }
-    .card {
-      background-color: var(--card-bg);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
-    }
-    .card h2 {
-      margin-top: 0;
-      font-size: 1.1rem;
-      border-bottom: 1px solid #334155;
-      padding-bottom: 8px;
-      color: var(--accent);
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .metric {
-      display: flex;
-      flex-direction: column;
-    }
-    .metric .label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-    .metric .value {
       font-size: 1.25rem;
+      color: var(--accent);
+    }
+    
+    /* شريط تنقل الأجزاء */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
       font-weight: bold;
-      margin-top: 4px;
-    }
-    .status {
-      text-align: center;
       font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 12px;
     }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* جدول التوقعات الأفقي المماثل لـ Windguru */
+    .table-container {
+      overflow-x: auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .forecast-table {
+      border-collapse: collapse;
+      width: 100%;
+      text-align: center;
+      white-space: nowrap;
+      font-size: 0.8rem;
+    }
+    .forecast-table th, .forecast-table td {
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+    }
+    .row-title {
+      position: sticky;
+      right: 0;
+      background: var(--card-bg);
+      font-weight: bold;
+      text-align: right;
+      z-index: 2;
+    }
+    
+    /* ألوان خلايا الرياح والبحر */
+    .wind-low { background-color: #2da44e; color: #fff; }
+    .wind-med { background-color: #e3b341; color: #000; }
+    .wind-high { background-color: #cf222e; color: #fff; }
+    .arrow { display: inline-block; font-weight: bold; }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <h1>طقس وحالة بحر سيدي إفني</h1>
-    <p style="font-size:0.85rem; color:var(--text-muted);">التوقعات المباشرة للملاحة والصيد</p>
+    <h1>سيدي إفني - توقعات الأيام القادمة</h1>
   </div>
 
-  <div class="card">
-    <h2>الطقس العام</h2>
-    <div class="grid">
-      <div class="metric">
-        <span class="label">درجة الحرارة</span>
-        <span class="value" id="temp">-- °C</span>
-      </div>
-      <div class="metric">
-        <span class="label">سرعة الرياح</span>
-        <span class="value" id="wind-speed">-- عقدة</span>
-      </div>
-    </div>
+  <!-- أزرار التبديل بين أجزاء المشروع -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchSection('all')">الكل</button>
+    <button class="tab-btn" onclick="switchSection('weather')">الطقس والرياح</button>
+    <button class="tab-btn" onclick="switchSection('marine')">حالة البحر</button>
   </div>
 
-  <div class="card">
-    <h2>حالة البحر والحرارة</h2>
-    <div class="grid">
-      <div class="metric">
-        <span class="label">ارتفاع الموج</span>
-        <span class="value" id="wave-height">-- م</span>
-      </div>
-      <div class="metric">
-        <span class="label">فترة الموجة</span>
-        <span class="value" id="wave-period">-- ثانية</span>
-      </div>
-    </div>
+  <div class="table-container">
+    <table class="forecast-table">
+      <thead>
+        <tr id="row-hours">
+          <th class="row-title">الساعة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- جزء الطقس والرياح -->
+        <tr id="row-temp" class="sec-weather">
+          <td class="row-title">الحرارة °C</td>
+        </tr>
+        <tr id="row-wind" class="sec-weather">
+          <td class="row-title">الرياح (عقدة)</td>
+        </tr>
+        <tr id="row-dir" class="sec-weather">
+          <td class="row-title">اتجاه الرياح</td>
+        </tr>
+        
+        <!-- جزء حالة البحر -->
+        <tr id="row-wave" class="sec-marine">
+          <td class="row-title">الموج (متر)</td>
+        </tr>
+        <tr id="row-period" class="sec-marine">
+          <td class="row-title">فترة الموج (ث)</td>
+        </tr>
+        
+        <!-- جزء المد والجزر -->
+        <tr id="row-tide" class="sec-tide">
+          <td class="row-title">المد والجزر</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <div class="status" id="status-text">جاري تحميل البيانات...</div>
+  <div id="status" style="text-align:center; margin-top:12px; font-size:0.8rem;">جاري جلب التوقعات...</div>
 
   <script src="cordova.js"></script>
   <script src="js/index.js"></script>
 </body>
 </html>
-
-
