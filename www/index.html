@@ -8,13 +8,11 @@
     :root {
       --bg: #0d1117;
       --card-bg: #161b22;
-      --text: #ffffff; /* جعل النص أبيض ناصع لمزيد من التباين */
+      --text: #ffffff;
       --border: #444c56;
       --accent: #58a6ff;
     }
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 12px;
@@ -25,7 +23,6 @@
       user-select: none;
     }
 
-    /* الشاشة الافتتاحية */
     #custom-splash {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -37,16 +34,11 @@
       transition: opacity 0.4s ease;
       overflow: hidden;
     }
-    #custom-splash img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    #custom-splash img { width: 100%; height: 100%; object-fit: cover; }
 
     .header { text-align: center; margin-bottom: 14px; }
     .header h1 { margin: 0; font-size: 1.5rem; color: #79c0ff; font-weight: 800; }
 
-    /* كارت الشروق والغروب */
     .sun-card {
       background: var(--card-bg);
       border: 1.5px solid var(--border);
@@ -67,7 +59,6 @@
       box-shadow: 0 0 16px rgba(234, 179, 8, 0.8);
     }
     
-    /* أزرار التبويب */
     .nav-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
     .tab-btn {
       flex: 1; padding: 10px 4px; background: var(--card-bg);
@@ -76,7 +67,6 @@
     }
     .tab-btn.active { background: #1f6beb; color: #fff; border-color: #388bfd; font-size: 1.05rem; }
 
-    /* جدول التوقعات مع تكبير الخطوط */
     .table-container {
       overflow-x: auto; background: var(--card-bg);
       border: 1.5px solid var(--border); border-radius: 10px; padding: 2px;
@@ -85,7 +75,6 @@
     .forecast-table { border-collapse: collapse; width: 100%; text-align: center; white-space: nowrap; font-size: 0.95rem; }
     .forecast-table th, .forecast-table td { padding: 8px 10px; border: 1px solid var(--border); }
     
-    /* عناوين الصفوف اليمنى */
     .row-title {
       position: sticky; right: 0;
       background: #21262d !important;
@@ -101,26 +90,20 @@
     .time-cell { font-weight: bold; color: #f0f6fc; font-size: 0.95rem; }
     .temp-cell { font-weight: bold; font-size: 1rem; color: #ffffff; }
 
-    /* تكبير أسهم اتجاه الرياح مميزة وبأحجام بارزة */
     .wind-arrow {
-      display: inline-block;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 900;
-      line-height: 1;
       color: #58a6ff;
-      transform-origin: center;
+      line-height: 1;
     }
 
-    /* ألوان خلايا الرياح حسب السرعة */
     .wind-low { background-color: #1e7e34; color: #ffffff; font-weight: bold; font-size: 1rem; }
     .wind-med { background-color: #d97706; color: #ffffff; font-weight: bold; font-size: 1rem; }
     .wind-high { background-color: #dc2626; color: #ffffff; font-weight: bold; font-size: 1.05rem; }
 
-    /* أبعاد وحجم خط الموجه والمد */
     .wave-cell { font-weight: bold; font-size: 0.95rem; color: #e6edf3; }
     .period-cell { font-weight: bold; font-size: 0.95rem; color: #8b949e; }
 
-    /* رسم منحنى المد والجزر */
     .tide-chart-box {
       background: #090d16;
       border: 1.5px solid var(--border);
@@ -139,7 +122,6 @@
 </head>
 <body>
 
-  <!-- شاشة البداية الكاملة -->
   <div id="custom-splash">
     <img src="res/splash.png" alt="">
   </div>
@@ -165,9 +147,9 @@
     </div>
 
     <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchSection('all')">الكل</button>
-      <button class="tab-btn" onclick="switchSection('weather')">الطقس والرياح</button>
-      <button class="tab-btn" onclick="switchSection('marine')">البحر والمد</button>
+      <button class="tab-btn active" onclick="switchSection('all', this)">الكل</button>
+      <button class="tab-btn" onclick="switchSection('weather', this)">الطقس والرياح</button>
+      <button class="tab-btn" onclick="switchSection('marine', this)">البحر والمد</button>
     </div>
 
     <div class="table-container">
@@ -204,7 +186,7 @@
           splash.style.opacity = '0';
           setTimeout(() => splash.remove(), 400);
         }
-      }, 1500);
+      }, 1200);
     });
   </script>
 </body>

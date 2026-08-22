@@ -1,7 +1,7 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 
-// في حال عدم عمل deviceready فوراً، نفذ عند تحميل النافذة
-window.addEventListener('load', () => {
+// تشغيل جلب البيانات فور تحميل الصفحة لضمان السرعة
+window.addEventListener('DOMContentLoaded', () => {
   checkAndLoad();
 });
 
@@ -25,20 +25,20 @@ function showNoInternet(show) {
   if (mainCont) mainCont.style.display = show ? 'none' : 'block';
 }
 
-// سهم اتجاه الرياح بأسلوب آمن وكبير جداً
+// دالة إرجاع سهم اتجاه الرياح بحجم كبير وبارز
 function getWindArrow(deg) {
   if (deg === undefined || deg === null) return '-';
-  return `<span class="wind-arrow" style="transform: rotate(${deg}deg);">&#10132;</span>`;
+  return `<span class="wind-arrow" style="transform: rotate(${deg}deg); display:inline-block;">➔</span>`;
 }
 
 function fetchForecastData() {
   const statusEl = document.getElementById('status');
   if (statusEl) statusEl.innerText = 'جاري التحديث...';
 
-  // جلب أوقات الشروق والغروب والمد والجزر دائماً
+  // عرض أوقات الشروق والغروب ورسم المد والجزر فوراً
   fetchTidesAndSun();
 
-  // رابط بيانات Windguru Sidi Ifni
+  // نفس رابط Windguru المباشر الأصلي الخاص بسيدي إفني
   fetch('https://www.windguru.cz/int/iapi.php?script=forecast&id_model=3&id_spot=49386')
     .then(response => response.json())
     .then(data => {
@@ -74,7 +74,6 @@ function renderForecastTable(fcst) {
 
   if (!rowDays || !rowHours) return;
 
-  // إعادة بناء عناوين الصفوف
   rowDays.innerHTML = '<th class="row-title">اليوم</th>';
   rowHours.innerHTML = '<th class="row-title">الساعة</th>';
   rowTemp.innerHTML = '<td class="row-title">الحرارة C°</td>';
@@ -86,7 +85,6 @@ function renderForecastTable(fcst) {
   let currentDay = '';
   
   hours.forEach((hr, i) => {
-    // الأيام
     const dayName = days[i] || '';
     if (dayName !== currentDay) {
       currentDay = dayName;
@@ -95,27 +93,20 @@ function renderForecastTable(fcst) {
       rowDays.innerHTML += `<th class="day-header"></th>`;
     }
 
-    // الساعات
     rowHours.innerHTML += `<td class="time-cell">${hr}:00</td>`;
-
-    // الحرارة
     rowTemp.innerHTML += `<td class="temp-cell">${Math.round(temp[i] || 0)}°</td>`;
 
-    // الرياح
     const spd = Math.round(windSpd[i] || 0);
     let windClass = 'wind-low';
     if (spd >= 12 && spd < 20) windClass = 'wind-med';
     if (spd >= 20) windClass = 'wind-high';
     rowWind.innerHTML += `<td class="${windClass}">${spd}</td>`;
 
-    // اتجاه الرياح (السهام المكبرة)
     rowDir.innerHTML += `<td>${getWindArrow(windDir[i])}</td>`;
 
-    // ارتفاع الموج
     const hgt = waveHgt[i] ? waveHgt[i].toFixed(1) : '-';
     rowWave.innerHTML += `<td class="wave-cell">${hgt}m</td>`;
 
-    // فترة الموج
     const per = wavePer[i] ? Math.round(wavePer[i]) : '-';
     rowPeriod.innerHTML += `<td class="period-cell">${per}s</td>`;
   });
@@ -135,7 +126,6 @@ function renderTideChart() {
   const svg = document.getElementById('tide-svg');
   if (!svg) return;
 
-  // رسم منحنى المد والجزر بأرقام كبيرة وألوان واضحة
   svg.innerHTML = `
     <defs>
       <linearGradient id="tide-grad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -149,28 +139,29 @@ function renderTideChart() {
 
     <!-- قاع 1 -->
     <circle cx="80" cy="138" r="6" fill="#ef4444" stroke="#fff" stroke-width="2"/>
-    <text x="80" y="158" fill="#fbbf24" font-size="15" font-weight="bold" text-anchor="middle">03:58</text>
+    <text x="80" y="158" fill="#fbbf24" font-size="14" font-weight="bold" text-anchor="middle">03:58</text>
 
     <!-- قمة 1 -->
     <circle cx="140" cy="35" r="6" fill="#ef4444" stroke="#fff" stroke-width="2"/>
-    <text x="140" y="20" fill="#fbbf24" font-size="15" font-weight="bold" text-anchor="middle">10:35</text>
+    <text x="140" y="20" fill="#fbbf24" font-size="14" font-weight="bold" text-anchor="middle">10:35</text>
 
     <!-- قاع 2 -->
     <circle cx="260" cy="135" r="6" fill="#ef4444" stroke="#fff" stroke-width="2"/>
-    <text x="260" y="158" fill="#fbbf24" font-size="15" font-weight="bold" text-anchor="middle">17:06</text>
+    <text x="260" y="158" fill="#fbbf24" font-size="14" font-weight="bold" text-anchor="middle">17:06</text>
 
     <!-- قمة 2 -->
     <circle cx="380" cy="35" r="6" fill="#ef4444" stroke="#fff" stroke-width="2"/>
-    <text x="380" y="20" fill="#fbbf24" font-size="15" font-weight="bold" text-anchor="middle">23:23</text>
+    <text x="380" y="20" fill="#fbbf24" font-size="14" font-weight="bold" text-anchor="middle">23:23</text>
   `;
 }
 
-function switchSection(sec) {
+// دالة التبديل الآمنة الخالية من خطأ event
+function switchSection(sec, btnElement) {
   const btns = document.querySelectorAll('.tab-btn');
   btns.forEach(b => b.classList.remove('active'));
 
-  if (window.event && window.event.target) {
-    window.event.target.classList.add('active');
+  if (btnElement) {
+    btnElement.classList.add('active');
   }
 
   const weatherRows = document.querySelectorAll('.sec-weather');
