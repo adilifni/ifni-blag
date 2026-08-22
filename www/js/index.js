@@ -2,7 +2,7 @@ document.addEventListener('deviceready', init, false);
 if (!window.cordova) document.addEventListener('DOMContentLoaded', init);
 
 function init() {
-    checkAndLoad();
+    if(navigator.splashscreen) navigator.splashscreen.hide(); checkAndLoad();
     document.addEventListener("offline", showOfflineScreen, false);
     document.addEventListener("online", checkAndLoad, false);
 }

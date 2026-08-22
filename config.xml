@@ -1,13 +1,25 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml me='1.0' encoding='utf-8'?>
 <widget id="com.ifni.weather" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>IfniWeather</name>
-    <description>
-        A sample Apache Cordova application that responds to the deviceready event.
-    </description>
-    <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
-        Apache Cordova Team
-    </author>
+    <name>طقس إفني</name>
+    <description>تطبيق توقعات الطقس والبحري لسيدي إفني</description>
+    <author email="dev@example.com" href="http://example.com">Adil</author>
     <content src="index.html" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
+
+    <!-- إعداد الأيقونة -->
+    <icon src="res/icon.png" />
+
+    <!-- إعداد الشاشة الافتتاحية -->
+    <platform name="android">
+        <splash src="res/splash.png" />
+    </platform>
+
+    <!-- خيارات التحكم بالشاشة الافتتاحية -->
+    <preference name="SplashScreen" value="screen" />
+    <preference name="AutoHideSplashScreen" value="false" />
+    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="ShowSplashScreenSpinner" value="false" />
+    <preference name="SplashMaintainAspectRatio" value="true" />
+
 </widget>
