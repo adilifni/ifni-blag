@@ -8,21 +8,19 @@
     :root {
       --bg: #0d1117;
       --card-bg: #161b22;
-      --text: #ffffff;
-      --border: #444c56;
+      --text: #c9d1d9;
+      --border: #30363d;
       --accent: #58a6ff;
     }
-    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 12px;
-      font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, system-ui, sans-serif;
       background-color: var(--bg);
       color: var(--text);
-      -webkit-user-select: none;
-      user-select: none;
     }
 
+    /* شاشة افتتاحيّة بملء الشاشة 100% بدون أي اقتصاص */
     #custom-splash {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -34,84 +32,64 @@
       transition: opacity 0.4s ease;
       overflow: hidden;
     }
-    #custom-splash img { width: 100%; height: 100%; object-fit: cover; }
+    #custom-splash img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-    .header { text-align: center; margin-bottom: 14px; }
-    .header h1 { margin: 0; font-size: 1.5rem; color: #79c0ff; font-weight: 800; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h1 { margin: 0; font-size: 1.2rem; color: var(--accent); }
 
     .sun-card {
       background: var(--card-bg);
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
-    .sun-times { display: flex; flex-direction: column; gap: 6px; font-weight: bold; font-size: 1.3rem; }
-    .sun-up { color: #38bdf8; display: flex; align-items: center; gap: 8px; }
-    .sun-down { color: #f97316; display: flex; align-items: center; gap: 8px; }
+    .sun-times { display: flex; flex-direction: column; gap: 4px; font-weight: bold; font-size: 1.1rem; }
+    .sun-up { color: #38bdf8; }
+    .sun-down { color: #f97316; }
     .sun-icon {
-      width: 50px; height: 50px;
+      width: 42px; height: 42px;
       border-radius: 50%;
       background: radial-gradient(circle, #f97316 0%, #eab308 100%);
-      box-shadow: 0 0 16px rgba(234, 179, 8, 0.8);
+      box-shadow: 0 0 12px rgba(234, 179, 8, 0.6);
     }
     
-    .nav-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .nav-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
     .tab-btn {
-      flex: 1; padding: 10px 4px; background: var(--card-bg);
-      border: 1.5px solid var(--border); color: #c9d1d9;
-      border-radius: 8px; font-weight: bold; font-size: 1rem;
+      flex: 1; padding: 8px; background: var(--card-bg);
+      border: 1px solid var(--border); color: var(--text);
+      border-radius: 6px; font-weight: bold; font-size: 0.8rem;
     }
-    .tab-btn.active { background: #1f6beb; color: #fff; border-color: #388bfd; font-size: 1.05rem; }
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
     .table-container {
       overflow-x: auto; background: var(--card-bg);
-      border: 1.5px solid var(--border); border-radius: 10px; padding: 2px;
-      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border); border-radius: 8px; padding: 4px;
     }
-    .forecast-table { border-collapse: collapse; width: 100%; text-align: center; white-space: nowrap; font-size: 0.95rem; }
-    .forecast-table th, .forecast-table td { padding: 8px 10px; border: 1px solid var(--border); }
+    .forecast-table { border-collapse: collapse; width: 100%; text-align: center; white-space: nowrap; font-size: 0.75rem; }
+    .forecast-table th, .forecast-table td { padding: 6px; border: 1px solid var(--border); }
+    .row-title { position: sticky; right: 0; background: var(--card-bg); font-weight: bold; text-align: right; z-index: 2; }
     
-    .row-title {
-      position: sticky; right: 0;
-      background: #21262d !important;
-      color: #79c0ff;
-      font-weight: 800;
-      font-size: 0.95rem;
-      text-align: right;
-      z-index: 2;
-      border-left: 2px solid var(--border) !important;
-    }
-    
-    .day-header { background: #1f242c; color: #79c0ff; font-weight: bold; font-size: 0.95rem; }
-    .time-cell { font-weight: bold; color: #f0f6fc; font-size: 0.95rem; }
-    .temp-cell { font-weight: bold; font-size: 1rem; color: #ffffff; }
-
-    .wind-arrow {
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: #58a6ff;
-      line-height: 1;
-    }
-
-    .wind-low { background-color: #1e7e34; color: #ffffff; font-weight: bold; font-size: 1rem; }
-    .wind-med { background-color: #d97706; color: #ffffff; font-weight: bold; font-size: 1rem; }
-    .wind-high { background-color: #dc2626; color: #ffffff; font-weight: bold; font-size: 1.05rem; }
-
-    .wave-cell { font-weight: bold; font-size: 0.95rem; color: #e6edf3; }
-    .period-cell { font-weight: bold; font-size: 0.95rem; color: #8b949e; }
+    .day-header { background: #21262d; color: var(--accent); font-weight: bold; }
+    .wind-low { background-color: #2da44e; color: #fff; }
+    .wind-med { background-color: #e3b341; color: #000; }
+    .wind-high { background-color: #cf222e; color: #fff; }
 
     .tide-chart-box {
       background: #090d16;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 12px;
     }
-    .tide-title { font-size: 1.1rem; font-weight: 800; color: #79c0ff; margin-bottom: 10px; text-align: center; }
+    .tide-title { font-size: 0.9rem; font-weight: bold; color: var(--accent); margin-bottom: 8px; text-align: center; }
 
     #no-internet-screen {
       display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -122,15 +100,16 @@
 </head>
 <body>
 
+  <!-- الشاشة الافتتاحية الكاملة بملء الشاشة -->
   <div id="custom-splash">
     <img src="res/splash.png" alt="">
   </div>
 
   <div id="no-internet-screen">
-    <div style="font-size:3.5rem; margin-bottom:16px;">⚠️</div>
-    <div style="font-size:1.4rem; font-weight:bold;">لا يوجد اتصال بالإنترنت</div>
-    <p style="color:#8b949e; font-size:1.1rem;">يرجى الاتصال بالشبكة للاطلاع على التوقعات.</p>
-    <button onclick="checkAndLoad()" style="padding:12px 24px; background:#1f6beb; color:#fff; border:none; border-radius:8px; font-size:1.1rem; font-weight:bold;">إعادة المحاولة</button>
+    <div style="font-size:3rem; margin-bottom:16px;">⚠️</div>
+    <div style="font-size:1.2rem; font-weight:bold;">لا يوجد اتصال بالإنترنت</div>
+    <p style="color:#8b949e;">يرجى الاتصال بالشبكة للاطلاع على التوقعات.</p>
+    <button onclick="checkAndLoad()" style="padding:10px 20px; background:var(--accent); color:#fff; border:none; border-radius:6px;">إعادة المحاولة</button>
   </div>
 
   <div id="main-content">
@@ -140,16 +119,16 @@
 
     <div class="sun-card">
       <div class="sun-times">
-        <div class="sun-up"><span style="font-size:1.5rem;">⇑</span> <span id="sunrise-time">--:--</span></div>
-        <div class="sun-down"><span style="font-size:1.5rem;">⇓</span> <span id="sunset-time">--:--</span></div>
+        <div class="sun-up"><span style="font-size:1.2rem;">⇑</span> <span id="sunrise-time">--:--</span></div>
+        <div class="sun-down"><span style="font-size:1.2rem;">⇓</span> <span id="sunset-time">--:--</span></div>
       </div>
       <div class="sun-icon"></div>
     </div>
 
     <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchSection('all', this)">الكل</button>
-      <button class="tab-btn" onclick="switchSection('weather', this)">الطقس والرياح</button>
-      <button class="tab-btn" onclick="switchSection('marine', this)">البحر والمد</button>
+      <button class="tab-btn active" onclick="switchSection('all')">الكل</button>
+      <button class="tab-btn" onclick="switchSection('weather')">الطقس والرياح</button>
+      <button class="tab-btn" onclick="switchSection('marine')">البحر والمد</button>
     </div>
 
     <div class="table-container">
@@ -159,7 +138,7 @@
           <tr id="row-hours"><th class="row-title">الساعة</th></tr>
         </thead>
         <tbody>
-          <tr id="row-temp" class="sec-weather"><td class="row-title">الحرارة C°</td></tr>
+          <tr id="row-temp" class="sec-weather"><td class="row-title">الحرارة °C</td></tr>
           <tr id="row-wind" class="sec-weather"><td class="row-title">الرياح (عقدة)</td></tr>
           <tr id="row-dir" class="sec-weather"><td class="row-title">اتجاه الرياح</td></tr>
           <tr id="row-wave" class="sec-marine"><td class="row-title">الموج (متر)</td></tr>
@@ -170,10 +149,10 @@
 
     <div class="tide-chart-box sec-marine">
       <div class="tide-title">منحنى المد والجزر (اليوم)</div>
-      <svg id="tide-svg" viewBox="0 0 500 160" style="width:100%; height:auto; overflow:visible;"></svg>
+      <svg id="tide-svg" viewBox="0 0 500 150" style="width:100%; height:auto; overflow:visible;"></svg>
     </div>
 
-    <div id="status" style="text-align:center; margin-top:14px; font-size:0.9rem; color:#8b949e;">جاري جلب البيانات...</div>
+    <div id="status" style="text-align:center; margin-top:12px; font-size:0.8rem; color:#8b949e;">جاري جلب البيانات...</div>
   </div>
 
   <script src="cordova.js"></script>
@@ -186,7 +165,7 @@
           splash.style.opacity = '0';
           setTimeout(() => splash.remove(), 400);
         }
-      }, 1200);
+      }, 1500);
     });
   </script>
 </body>
