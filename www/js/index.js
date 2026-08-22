@@ -54,6 +54,7 @@ function loadForecastData() {
         }
     })
     .catch(err => {
+        console.error(err);
         showOfflineScreen();
     });
 }
@@ -71,7 +72,7 @@ function renderTable(wHourly, mHourly) {
 
     rowDays.innerHTML = '<th class="row-title">اليوم</th>';
     rowHours.innerHTML = '<th class="row-title">الساعة</th>';
-    rowTemp.innerHTML = '<td class="row-title">الحرارة °C</td>';
+    rowTemp.innerHTML = '<td class="row-title">الحرارة C°</td>';
     rowWind.innerHTML = '<td class="row-title">الرياح (عقدة)</td>';
     rowDir.innerHTML = '<td class="row-title">اتجاه الرياح</td>';
     rowWave.innerHTML = '<td class="row-title">الموج (متر)</td>';
@@ -99,30 +100,31 @@ function renderTable(wHourly, mHourly) {
 
         rowDays.innerHTML += `<th class="day-header">${dayName}</th>`;
         rowHours.innerHTML += `<th>${hour}</th>`;
-        rowTemp.innerHTML += `<td>${temp}°</td>`;
+        rowTemp.innerHTML += `<td style="font-weight:bold; font-size:1rem;">${temp}°</td>`;
         
         let windClass = wind < 8 ? 'wind-low' : (wind < 15 ? 'wind-med' : 'wind-high');
         rowWind.innerHTML += `<td class="${windClass}">${wind}</td>`;
-        rowDir.innerHTML += `<td><span style="display:inline-block; transform:rotate(${dir}deg)">↓</span></td>`;
         
-        rowWave.innerHTML += `<td>${wave}m</td>`;
-        rowPeriod.innerHTML += `<td>${period}s</td>`;
+        // سهم اتجاه الرياح بشكل بارز وكبير ومستقر
+        rowDir.innerHTML += `<td><span class="wind-arrow" style="transform:rotate(${dir}deg)">↓</span></td>`;
+        
+        rowWave.innerHTML += `<td style="font-weight:bold;">${wave}m</td>`;
+        rowPeriod.innerHTML += `<td style="color:#8b949e; font-weight:bold;">${period}s</td>`;
     }
 }
 
-// رسم منحنى المد والجزر المصحح (قمم للمد وقيعان للجزر)
 function renderTideChart() {
     const svg = document.getElementById('tide-svg');
+    if (!svg) return;
     
-    // مسار المنحنى المعتدل الصحيح
     const pathD = "M 0 60 C 30 110, 50 110, 75 110 C 100 110, 150 20, 187.5 20 C 225 20, 275 110, 312.5 110 C 350 110, 400 20, 437.5 20 C 465 20, 485 50, 500 60 L 500 150 L 0 150 Z";
     const lineD = "M 0 60 C 30 110, 50 110, 75 110 C 100 110, 150 20, 187.5 20 C 225 20, 275 110, 312.5 110 C 350 110, 400 20, 437.5 20 C 465 20, 485 50, 500 60";
 
     const tides = [
-        { time: "3:58", x: 75, y: 110, textY: 130, type: "low" },      // جزر (أسفل)
-        { time: "10:35", x: 187.5, y: 20, textY: 12, type: "high" },   // مد (أعلى)
-        { time: "17:06", x: 312.5, y: 110, textY: 130, type: "low" },   // جزر (أسفل)
-        { time: "23:23", x: 437.5, y: 20, textY: 12, type: "high" }    // مد (أعلى)
+        { time: "3:58", x: 75, y: 110, textY: 130 },
+        { time: "10:35", x: 187.5, y: 20, textY: 12 },
+        { time: "17:06", x: 312.5, y: 110, textY: 130 },
+        { time: "23:23", x: 437.5, y: 20, textY: 12 }
     ];
 
     let html = `
@@ -146,10 +148,13 @@ function renderTideChart() {
     svg.innerHTML = html;
 }
 
-function switchSection(type) {
+function switchSection(type, btnElement) {
     const btns = document.querySelectorAll('.tab-btn');
     btns.forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
 
     const wRows = document.querySelectorAll('.sec-weather');
     const mRows = document.querySelectorAll('.sec-marine');
