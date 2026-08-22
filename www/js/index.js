@@ -110,26 +110,26 @@ function renderTable(wHourly, mHourly) {
     }
 }
 
-// رسم منحنى المد والجزر بالنقاط والوقت
+// رسم منحنى المد والجزر المصحح (قمم للمد وقيعان للجزر)
 function renderTideChart() {
     const svg = document.getElementById('tide-svg');
     
-    // نقاط منحنى موجة المد لسيدي إفني
-    const pathD = "M 0 90 Q 62.5 20, 125 90 T 250 90 T 375 90 T 500 90 L 500 150 L 0 150 Z";
-    const lineD = "M 0 90 Q 62.5 20, 125 90 T 250 90 T 375 90 T 500 90";
+    // مسار المنحنى المعتدل الصحيح
+    const pathD = "M 0 60 C 30 110, 50 110, 75 110 C 100 110, 150 20, 187.5 20 C 225 20, 275 110, 312.5 110 C 350 110, 400 20, 437.5 20 C 465 20, 485 50, 500 60 L 500 150 L 0 150 Z";
+    const lineD = "M 0 60 C 30 110, 50 110, 75 110 C 100 110, 150 20, 187.5 20 C 225 20, 275 110, 312.5 110 C 350 110, 400 20, 437.5 20 C 465 20, 485 50, 500 60";
 
     const tides = [
-        { time: "3:58", x: 62.5, y: 125, type: "low" },
-        { time: "10:35", x: 187.5, y: 30, type: "high" },
-        { time: "17:06", x: 312.5, y: 125, type: "low" },
-        { time: "23:23", x: 437.5, y: 30, type: "high" }
+        { time: "3:58", x: 75, y: 110, textY: 130, type: "low" },      // جزر (أسفل)
+        { time: "10:35", x: 187.5, y: 20, textY: 12, type: "high" },   // مد (أعلى)
+        { time: "17:06", x: 312.5, y: 110, textY: 130, type: "low" },   // جزر (أسفل)
+        { time: "23:23", x: 437.5, y: 20, textY: 12, type: "high" }    // مد (أعلى)
     ];
 
     let html = `
         <defs>
             <linearGradient id="tideGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.7"/>
-                <stop offset="100%" stop-color="#0284c7" stop-opacity="0.1"/>
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#0284c7" stop-opacity="0.15"/>
             </linearGradient>
         </defs>
         <path d="${pathD}" fill="url(#tideGrad)"/>
@@ -139,7 +139,7 @@ function renderTideChart() {
     tides.forEach(t => {
         html += `
             <circle cx="${t.x}" cy="${t.y}" r="6" fill="#ef4444" stroke="#fff" stroke-width="1.5" />
-            <text x="${t.x}" y="${t.y > 50 ? t.y - 12 : t.y - 12}" fill="#facc15" font-size="14" font-weight="bold" text-anchor="middle">${t.time}</text>
+            <text x="${t.x}" y="${t.textY}" fill="#facc15" font-size="14" font-weight="bold" text-anchor="middle">${t.time}</text>
         `;
     });
 
