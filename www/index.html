@@ -20,7 +20,7 @@
       color: var(--text);
     }
 
-    /* شاشة افتتاحيّة بملء الشاشة 100% */
+    /* شاشة افتتاحيّة تغطي الشاشة 100% بالكامل */
     #custom-splash {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -35,7 +35,7 @@
     #custom-splash img {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* تجعل الصورة تغطي كامل الشاشة دون فراغات */
+      object-fit: cover;
     }
 
     .header { text-align: center; margin-bottom: 12px; }
@@ -100,9 +100,9 @@
 </head>
 <body>
 
-  <!-- الشاشة الافتتاحية المصممة -->
+  <!-- الشاشة الافتتاحية باستخدام الصورة من داخل مجلد www -->
   <div id="custom-splash">
-    <img src="res/splash.png" alt="Loading...">
+    <img src="res/splash.png" alt="">
   </div>
 
   <div id="no-internet-screen">
