@@ -20,21 +20,22 @@
       color: var(--text);
     }
 
-    /* شاشة افتتاحية سريعة داخلية */
+    /* شاشة افتتاحيّة بملء الشاشة 100% */
     #custom-splash {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0; left: 0; width: 100vw; height: 100vh;
       background-color: var(--bg);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 99999;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.4s ease;
+      overflow: hidden;
     }
     #custom-splash img {
-      max-width: 70%;
-      max-height: 70%;
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* تجعل الصورة تغطي كامل الشاشة دون فراغات */
     }
 
     .header { text-align: center; margin-bottom: 12px; }
@@ -99,7 +100,7 @@
 </head>
 <body>
 
-  <!-- الشاشة الافتتاحية السريعة -->
+  <!-- الشاشة الافتتاحية المصممة -->
   <div id="custom-splash">
     <img src="res/splash.png" alt="Loading...">
   </div>
@@ -157,15 +158,14 @@
   <script src="cordova.js"></script>
   <script src="js/index.js"></script>
   <script>
-    // إخفاء الشاشة الافتتاحية بعد ثانية من التحميل
     window.addEventListener('load', () => {
       setTimeout(() => {
         const splash = document.getElementById('custom-splash');
         if (splash) {
           splash.style.opacity = '0';
-          setTimeout(() => splash.remove(), 500);
+          setTimeout(() => splash.remove(), 400);
         }
-      }, 1200);
+      }, 1500);
     });
   </script>
 </body>

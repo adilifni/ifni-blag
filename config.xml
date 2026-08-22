@@ -7,18 +7,10 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
 
-    <!-- الأيقونة العامة -->
     <icon src="res/icon.png" />
 
     <platform name="android">
-        <!-- الأيقونة للشاشة الافتتاحية الحديثة -->
-        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/splash.png" />
-        <!-- لون خلفية الشاشة الافتتاحية (يمكنك تغييره ليناسب تصميمك) -->
         <preference name="AndroidWindowSplashScreenBackground" value="#0d1117" />
     </platform>
-
-    <!-- خيارات العرض -->
-    <preference name="AutoHideSplashScreen" value="true" />
-    <preference name="SplashScreenDelay" value="3000" />
 
 </widget>
