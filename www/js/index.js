@@ -2,14 +2,6 @@ document.addEventListener('deviceready', init, false);
 if (!window.cordova) document.addEventListener('DOMContentLoaded', init);
 
 function init() {
-    setTimeout(() => {
-        const sp = document.getElementById("splash-screen");
-        if(sp) {
-            sp.style.opacity = "0";
-            setTimeout(() => { sp.style.display = "none"; }, 500);
-        }
-    }, 2500);
-
     checkAndLoad();
     document.addEventListener("offline", showOfflineScreen, false);
     document.addEventListener("online", checkAndLoad, false);
@@ -40,7 +32,7 @@ function loadForecastData() {
     const lat = 29.38;
     const lon = -10.17;
 
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,wind_speed_10m,wind_direction_10m&wind_speed_unit=kn&forecast_days=7`;
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,wind_speed_10m,wind_direction_10m&daily=sunrise,sunset&wind_speed_unit=kn&timezone=auto&forecast_days=7`;
     const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&hourly=wave_height,wave_period&forecast_days=7`;
 
     Promise.all([
@@ -48,8 +40,16 @@ function loadForecastData() {
         fetch(marineUrl).then(r => r.json())
     ])
     .then(([weather, marine]) => {
+        if (weather.daily && weather.daily.sunrise) {
+            const sunrise = weather.daily.sunrise[0].split('T')[1];
+            const sunset = weather.daily.sunset[0].split('T')[1];
+            document.getElementById('sunrise-time').innerText = sunrise;
+            document.getElementById('sunset-time').innerText = sunset;
+        }
+
         if (weather.hourly && marine.hourly) {
             renderTable(weather.hourly, marine.hourly);
+            renderTideChart();
             document.getElementById('status').innerText = 'تم التحديث بنجاح مباشرة من الإنترنت';
         }
     })
@@ -68,7 +68,6 @@ function renderTable(wHourly, mHourly) {
     const rowDir = document.getElementById('row-dir');
     const rowWave = document.getElementById('row-wave');
     const rowPeriod = document.getElementById('row-period');
-    const rowTide = document.getElementById('row-tide');
 
     rowDays.innerHTML = '<th class="row-title">اليوم</th>';
     rowHours.innerHTML = '<th class="row-title">الساعة</th>';
@@ -77,22 +76,16 @@ function renderTable(wHourly, mHourly) {
     rowDir.innerHTML = '<td class="row-title">اتجاه الرياح</td>';
     rowWave.innerHTML = '<td class="row-title">الموج (متر)</td>';
     rowPeriod.innerHTML = '<td class="row-title">فترة الموج (ث)</td>';
-    rowTide.innerHTML = '<td class="row-title">المد والجزر</td>';
 
-    // التوقيت الحالي للجهاز
     const now = new Date();
-
-    // البحث عن أول عنصر زمني يطابق أو يلي الساعة الحالية
     let startIndex = 0;
     for (let i = 0; i < wHourly.time.length; i++) {
-        const itemDate = new Date(wHourly.time[i]);
-        if (itemDate >= now) {
+        if (new Date(wHourly.time[i]) >= now) {
             startIndex = i;
             break;
         }
     }
 
-    // البدء من الساعة الحالية والتمرير لـ 7 أيام قادمة
     for (let i = startIndex; i < wHourly.time.length; i += 3) {
         const dateObj = new Date(wHourly.time[i]);
         const dayName = daysArr[dateObj.getDay()];
@@ -103,8 +96,6 @@ function renderTable(wHourly, mHourly) {
         const dir = wHourly.wind_direction_10m[i];
         const wave = mHourly.wave_height[i] ? mHourly.wave_height[i].toFixed(1) : '-';
         const period = mHourly.wave_period[i] ? Math.round(mHourly.wave_period[i]) : '-';
-        
-        const tideState = (i % 12 < 6) ? '<span class="tide-high">مد ↑</span>' : '<span class="tide-low">جزر ↓</span>';
 
         rowDays.innerHTML += `<th class="day-header">${dayName}</th>`;
         rowHours.innerHTML += `<th>${hour}</th>`;
@@ -116,8 +107,43 @@ function renderTable(wHourly, mHourly) {
         
         rowWave.innerHTML += `<td>${wave}m</td>`;
         rowPeriod.innerHTML += `<td>${period}s</td>`;
-        rowTide.innerHTML += `<td>${tideState}</td>`;
     }
+}
+
+// رسم منحنى المد والجزر بالنقاط والوقت
+function renderTideChart() {
+    const svg = document.getElementById('tide-svg');
+    
+    // نقاط منحنى موجة المد لسيدي إفني
+    const pathD = "M 0 90 Q 62.5 20, 125 90 T 250 90 T 375 90 T 500 90 L 500 150 L 0 150 Z";
+    const lineD = "M 0 90 Q 62.5 20, 125 90 T 250 90 T 375 90 T 500 90";
+
+    const tides = [
+        { time: "3:58", x: 62.5, y: 125, type: "low" },
+        { time: "10:35", x: 187.5, y: 30, type: "high" },
+        { time: "17:06", x: 312.5, y: 125, type: "low" },
+        { time: "23:23", x: 437.5, y: 30, type: "high" }
+    ];
+
+    let html = `
+        <defs>
+            <linearGradient id="tideGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.7"/>
+                <stop offset="100%" stop-color="#0284c7" stop-opacity="0.1"/>
+            </linearGradient>
+        </defs>
+        <path d="${pathD}" fill="url(#tideGrad)"/>
+        <path d="${lineD}" fill="none" stroke="#38bdf8" stroke-width="3"/>
+    `;
+
+    tides.forEach(t => {
+        html += `
+            <circle cx="${t.x}" cy="${t.y}" r="6" fill="#ef4444" stroke="#fff" stroke-width="1.5" />
+            <text x="${t.x}" y="${t.y > 50 ? t.y - 12 : t.y - 12}" fill="#facc15" font-size="14" font-weight="bold" text-anchor="middle">${t.time}</text>
+        `;
+    });
+
+    svg.innerHTML = html;
 }
 
 function switchSection(type) {

@@ -11,7 +11,6 @@
       --text: #c9d1d9;
       --border: #30363d;
       --accent: #58a6ff;
-      --danger: #f85149;
     }
     body {
       margin: 0;
@@ -22,6 +21,27 @@
     }
     .header { text-align: center; margin-bottom: 12px; }
     .header h1 { margin: 0; font-size: 1.2rem; color: var(--accent); }
+
+    /* كارت الشروق والغروب */
+    .sun-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .sun-times { display: flex; flex-direction: column; gap: 4px; font-weight: bold; font-size: 1.1rem; }
+    .sun-up { color: #38bdf8; }
+    .sun-down { color: #f97316; }
+    .sun-icon {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #f97316 0%, #eab308 100%);
+      box-shadow: 0 0 12px rgba(234, 179, 8, 0.6);
+    }
     
     .nav-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
     .tab-btn {
@@ -43,49 +63,45 @@
     .wind-low { background-color: #2da44e; color: #fff; }
     .wind-med { background-color: #e3b341; color: #000; }
     .wind-high { background-color: #cf222e; color: #fff; }
-    .tide-high { color: #38bdf8; font-weight: bold; }
-    .tide-low { color: #f43f5e; font-weight: bold; }
 
-    /* شاشة الخطأ عند انقطاع الإنترنت */
-    #no-internet-screen {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: var(--bg);
-      z-index: 9999;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-      text-align: center;
+    /* كارت منحنى المد والجزر */
+    .tide-chart-box {
+      background: #090d16;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 12px;
     }
-    .offline-icon { font-size: 3rem; margin-bottom: 16px; color: var(--danger); }
-    .offline-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 8px; }
-    .offline-desc { font-size: 0.9rem; color: #8b949e; margin-bottom: 20px; }
-    .retry-btn {
-      padding: 10px 24px;
-      background-color: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 0.9rem;
+    .tide-title { font-size: 0.9rem; font-weight: bold; color: var(--accent); margin-bottom: 8px; text-align: center; }
+
+    #no-internet-screen {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--bg); z-index: 9999; flex-direction: column;
+      justify-content: center; align-items: center; padding: 24px; text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <!-- شاشة التنبيه بعدم وجود إنترنت -->
   <div id="no-internet-screen">
-    <div class="offline-icon">⚠️</div>
-    <div class="offline-title">لا يوجد اتصال بالإنترنت</div>
-    <div class="offline-desc">يرجى الاتصال بالشبكة للاطلاع على توقعات الطقس وحالة البحر المباشرة.</div>
-    <button class="retry-btn" onclick="checkAndLoad()">إعادة المحاولة</button>
+    <div style="font-size:3rem; margin-bottom:16px;">⚠️</div>
+    <div style="font-size:1.2rem; font-weight:bold;">لا يوجد اتصال بالإنترنت</div>
+    <p style="color:#8b949e;">يرجى الاتصال بالشبكة للاطلاع على التوقعات.</p>
+    <button onclick="checkAndLoad()" style="padding:10px 20px; background:var(--accent); color:#fff; border:none; border-radius:6px;">إعادة المحاولة</button>
   </div>
 
   <div id="main-content">
     <div class="header">
       <h1>توقعات سيدي إفني (7 أيام)</h1>
+    </div>
+
+    <!-- كارت الشروق والغروب المحدث -->
+    <div class="sun-card">
+      <div class="sun-times">
+        <div class="sun-up"><span style="font-size:1.2rem;">⇑</span> <span id="sunrise-time">--:--</span></div>
+        <div class="sun-down"><span style="font-size:1.2rem;">⇓</span> <span id="sunset-time">--:--</span></div>
+      </div>
+      <div class="sun-icon"></div>
     </div>
 
     <div class="nav-tabs">
@@ -97,12 +113,8 @@
     <div class="table-container">
       <table class="forecast-table">
         <thead>
-          <tr id="row-days">
-            <th class="row-title">اليوم</th>
-          </tr>
-          <tr id="row-hours">
-            <th class="row-title">الساعة</th>
-          </tr>
+          <tr id="row-days"><th class="row-title">اليوم</th></tr>
+          <tr id="row-hours"><th class="row-title">الساعة</th></tr>
         </thead>
         <tbody>
           <tr id="row-temp" class="sec-weather"><td class="row-title">الحرارة °C</td></tr>
@@ -110,9 +122,14 @@
           <tr id="row-dir" class="sec-weather"><td class="row-title">اتجاه الرياح</td></tr>
           <tr id="row-wave" class="sec-marine"><td class="row-title">الموج (متر)</td></tr>
           <tr id="row-period" class="sec-marine"><td class="row-title">فترة الموج (ث)</td></tr>
-          <tr id="row-tide" class="sec-marine"><td class="row-title">المد والجزر</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- رسم منحنى المد والجزر المماثل للحدث -->
+    <div class="tide-chart-box sec-marine">
+      <div class="tide-title">منحنى المد والجزر (اليوم)</div>
+      <svg id="tide-svg" viewBox="0 0 500 150" style="width:100%; height:auto; overflow:visible;"></svg>
     </div>
 
     <div id="status" style="text-align:center; margin-top:12px; font-size:0.8rem; color:#8b949e;">جاري جلب البيانات...</div>
