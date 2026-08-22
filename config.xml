@@ -1,4 +1,4 @@
-<?xml me='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <widget id="com.ifni.weather" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>طقس إفني</name>
     <description>تطبيق توقعات الطقس والبحري لسيدي إفني</description>
@@ -7,19 +7,18 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
 
-    <!-- إعداد الأيقونة -->
+    <!-- الأيقونة العامة -->
     <icon src="res/icon.png" />
 
-    <!-- إعداد الشاشة الافتتاحية -->
     <platform name="android">
-        <splash src="res/splash.png" />
+        <!-- الأيقونة للشاشة الافتتاحية الحديثة -->
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/splash.png" />
+        <!-- لون خلفية الشاشة الافتتاحية (يمكنك تغييره ليناسب تصميمك) -->
+        <preference name="AndroidWindowSplashScreenBackground" value="#0d1117" />
     </platform>
 
-    <!-- خيارات التحكم بالشاشة الافتتاحية -->
-    <preference name="SplashScreen" value="screen" />
-    <preference name="AutoHideSplashScreen" value="false" />
+    <!-- خيارات العرض -->
+    <preference name="AutoHideSplashScreen" value="true" />
     <preference name="SplashScreenDelay" value="3000" />
-    <preference name="ShowSplashScreenSpinner" value="false" />
-    <preference name="SplashMaintainAspectRatio" value="true" />
 
 </widget>

@@ -19,10 +19,27 @@
       background-color: var(--bg);
       color: var(--text);
     }
+
+    /* شاشة افتتاحية سريعة داخلية */
+    #custom-splash {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      transition: opacity 0.5s ease;
+    }
+    #custom-splash img {
+      max-width: 70%;
+      max-height: 70%;
+      object-fit: contain;
+    }
+
     .header { text-align: center; margin-bottom: 12px; }
     .header h1 { margin: 0; font-size: 1.2rem; color: var(--accent); }
 
-    /* كارت الشروق والغروب */
     .sun-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -64,7 +81,6 @@
     .wind-med { background-color: #e3b341; color: #000; }
     .wind-high { background-color: #cf222e; color: #fff; }
 
-    /* كارت منحنى المد والجزر */
     .tide-chart-box {
       background: #090d16;
       border: 1px solid var(--border);
@@ -83,6 +99,11 @@
 </head>
 <body>
 
+  <!-- الشاشة الافتتاحية السريعة -->
+  <div id="custom-splash">
+    <img src="res/splash.png" alt="Loading...">
+  </div>
+
   <div id="no-internet-screen">
     <div style="font-size:3rem; margin-bottom:16px;">⚠️</div>
     <div style="font-size:1.2rem; font-weight:bold;">لا يوجد اتصال بالإنترنت</div>
@@ -95,7 +116,6 @@
       <h1>توقعات سيدي إفني (7 أيام)</h1>
     </div>
 
-    <!-- كارت الشروق والغروب المحدث -->
     <div class="sun-card">
       <div class="sun-times">
         <div class="sun-up"><span style="font-size:1.2rem;">⇑</span> <span id="sunrise-time">--:--</span></div>
@@ -126,7 +146,6 @@
       </table>
     </div>
 
-    <!-- رسم منحنى المد والجزر المماثل للحدث -->
     <div class="tide-chart-box sec-marine">
       <div class="tide-title">منحنى المد والجزر (اليوم)</div>
       <svg id="tide-svg" viewBox="0 0 500 150" style="width:100%; height:auto; overflow:visible;"></svg>
@@ -137,5 +156,17 @@
 
   <script src="cordova.js"></script>
   <script src="js/index.js"></script>
+  <script>
+    // إخفاء الشاشة الافتتاحية بعد ثانية من التحميل
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const splash = document.getElementById('custom-splash');
+        if (splash) {
+          splash.style.opacity = '0';
+          setTimeout(() => splash.remove(), 500);
+        }
+      }, 1200);
+    });
+  </script>
 </body>
 </html>
