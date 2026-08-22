@@ -2,9 +2,15 @@ document.addEventListener('deviceready', init, false);
 if (!window.cordova) document.addEventListener('DOMContentLoaded', init);
 
 function init() {
+    setTimeout(() => {
+        const sp = document.getElementById("splash-screen");
+        if(sp) {
+            sp.style.opacity = "0";
+            setTimeout(() => { sp.style.display = "none"; }, 500);
+        }
+    }, 2500);
+
     checkAndLoad();
-    
-    // الاستماع لإنقطاع أو عودة الإنترنت أثناء استخدام التطبيق
     document.addEventListener("offline", showOfflineScreen, false);
     document.addEventListener("online", checkAndLoad, false);
 }
@@ -73,7 +79,21 @@ function renderTable(wHourly, mHourly) {
     rowPeriod.innerHTML = '<td class="row-title">فترة الموج (ث)</td>';
     rowTide.innerHTML = '<td class="row-title">المد والجزر</td>';
 
-    for (let i = 0; i < wHourly.time.length; i += 3) {
+    // التوقيت الحالي للجهاز
+    const now = new Date();
+
+    // البحث عن أول عنصر زمني يطابق أو يلي الساعة الحالية
+    let startIndex = 0;
+    for (let i = 0; i < wHourly.time.length; i++) {
+        const itemDate = new Date(wHourly.time[i]);
+        if (itemDate >= now) {
+            startIndex = i;
+            break;
+        }
+    }
+
+    // البدء من الساعة الحالية والتمرير لـ 7 أيام قادمة
+    for (let i = startIndex; i < wHourly.time.length; i += 3) {
         const dateObj = new Date(wHourly.time[i]);
         const dayName = daysArr[dateObj.getDay()];
         const hour = dateObj.getHours() + ':00';
