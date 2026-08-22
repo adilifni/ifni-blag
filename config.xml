@@ -7,14 +7,13 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
 
+    <!-- أيقونة التطبيق الرئيسية -->
     <icon src="res/icon.png" />
 
     <platform name="android">
-        <!-- استخدام الشاشة الافتتاحية المصممة مباشرة -->
-        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/splash.png" />
-        <preference name="AndroidWindowSplashScreenBackground" value="#ffffff" />
-        <preference name="SplashScreenDelay" value="0" />
-        <preference name="AutoHideSplashScreen" value="true" />
+        <!-- وضع أيقونة التطبيق فقط داخل المربع المخصص من أندرويد لمنع الاقتصاص -->
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon.png" />
+        <preference name="AndroidWindowSplashScreenBackground" value="#e8ecef" />
     </platform>
 
 </widget>
