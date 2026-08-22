@@ -20,7 +20,6 @@
       color: var(--text);
     }
 
-    /* شاشة افتتاحيّة تغطي الشاشة 100% بالكامل */
     #custom-splash {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -29,7 +28,7 @@
       justify-content: center;
       align-items: center;
       z-index: 99999;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.3s ease;
       overflow: hidden;
     }
     #custom-splash img {
@@ -100,7 +99,6 @@
 </head>
 <body>
 
-  <!-- الشاشة الافتتاحية باستخدام الصورة من داخل مجلد www -->
   <div id="custom-splash">
     <img src="res/splash.png" alt="">
   </div>
@@ -158,14 +156,15 @@
   <script src="cordova.js"></script>
   <script src="js/index.js"></script>
   <script>
-    window.addEventListener('load', () => {
+    // إخفاء الشاشة الافتتاحية مباشرة بمجرد اكتمال تجهيز الصفحة
+    document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         const splash = document.getElementById('custom-splash');
         if (splash) {
           splash.style.opacity = '0';
-          setTimeout(() => splash.remove(), 400);
+          setTimeout(() => splash.remove(), 300);
         }
-      }, 1500);
+      }, 1000);
     });
   </script>
 </body>

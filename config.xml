@@ -10,9 +10,11 @@
     <icon src="res/icon.png" />
 
     <platform name="android">
-        <!-- لاستبدال شعار كوردوفا الرمادي في الأندرويد 12+ -->
-        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon.png" />
-        <preference name="AndroidWindowSplashScreenBackground" value="#0d1117" />
+        <!-- استخدام الشاشة الافتتاحية المصممة مباشرة -->
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/splash.png" />
+        <preference name="AndroidWindowSplashScreenBackground" value="#ffffff" />
+        <preference name="SplashScreenDelay" value="0" />
+        <preference name="AutoHideSplashScreen" value="true" />
     </platform>
 
 </widget>
