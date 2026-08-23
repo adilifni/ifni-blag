@@ -105,7 +105,6 @@ function renderTable(wHourly, mHourly) {
         let windClass = wind < 8 ? 'wind-low' : (wind < 15 ? 'wind-med' : 'wind-high');
         rowWind.innerHTML += `<td class="${windClass}">${wind}</td>`;
         
-        // سهم اتجاه الرياح بشكل بارز وكبير ومستقر
         rowDir.innerHTML += `<td><span class="wind-arrow" style="transform:rotate(${dir}deg)">↓</span></td>`;
         
         rowWave.innerHTML += `<td style="font-weight:bold;">${wave}m</td>`;
@@ -116,15 +115,32 @@ function renderTable(wHourly, mHourly) {
 function renderTideChart() {
     const svg = document.getElementById('tide-svg');
     if (!svg) return;
+
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 0);
+    const diff = now - startOfYear;
+    const oneDay = 1000 * 60 * 60 * 24;
+    const dayOfYear = Math.floor(diff / oneDay);
     
+    let baseLow1 = (3 * 60 + 58 + (dayOfYear * 50)) % (24 * 60);
+    let baseHigh1 = (baseLow1 + 372) % (24 * 60);
+    let baseLow2 = (baseHigh1 + 372) % (24 * 60);
+    let baseHigh2 = (baseLow2 + 372) % (24 * 60);
+
+    const formatTime = (minutes) => {
+        let h = Math.floor(minutes / 60);
+        let m = Math.floor(minutes % 60);
+        return `${h}:${m < 10 ? '0' : ''}${m}`;
+    };
+
     const pathD = "M 0 60 C 30 110, 50 110, 75 110 C 100 110, 150 20, 187.5 20 C 225 20, 275 110, 312.5 110 C 350 110, 400 20, 437.5 20 C 465 20, 485 50, 500 60 L 500 150 L 0 150 Z";
     const lineD = "M 0 60 C 30 110, 50 110, 75 110 C 100 110, 150 20, 187.5 20 C 225 20, 275 110, 312.5 110 C 350 110, 400 20, 437.5 20 C 465 20, 485 50, 500 60";
 
     const tides = [
-        { time: "3:58", x: 75, y: 110, textY: 130 },
-        { time: "10:35", x: 187.5, y: 20, textY: 12 },
-        { time: "17:06", x: 312.5, y: 110, textY: 130 },
-        { time: "23:23", x: 437.5, y: 20, textY: 12 }
+        { time: formatTime(baseLow1), x: 75, y: 110, textY: 130 },
+        { time: formatTime(baseHigh1), x: 187.5, y: 20, textY: 12 },
+        { time: formatTime(baseLow2), x: 312.5, y: 110, textY: 130 },
+        { time: formatTime(baseHigh2), x: 437.5, y: 20, textY: 12 }
     ];
 
     let html = `
