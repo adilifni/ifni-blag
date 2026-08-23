@@ -116,16 +116,18 @@ function renderTideChart() {
     const svg = document.getElementById('tide-svg');
     if (!svg) return;
 
+    // حساب فرق الأيام انطلاقاً من مرجع يوم 23 غشت 2026 (الجزر الأول كان 5:25 أي 325 دقيقة)
     const now = new Date();
-    const startOfYear = new Date(now.getFullYear(), 0, 0);
-    const diff = now - startOfYear;
-    const oneDay = 1000 * 60 * 60 * 24;
-    const dayOfYear = Math.floor(diff / oneDay);
+    const refDate = new Date(2026, 7, 23); // 23 غشت 2026
+    const diffDays = Math.floor((now - refDate) / (1000 * 60 * 60 * 24));
     
-    let baseLow1 = (3 * 60 + 58 + (dayOfYear * 50)) % (24 * 60);
-    let baseHigh1 = (baseLow1 + 372) % (24 * 60);
-    let baseLow2 = (baseHigh1 + 372) % (24 * 60);
-    let baseHigh2 = (baseLow2 + 372) % (24 * 60);
+    // الدورة القمرية اليومية لـ سيدي إفني (50.5 دقيقة تأخير يومي)
+    let baseLow1 = (5 * 60 + 25 + Math.round(diffDays * 50.5)) % (24 * 60);
+    if (baseLow1 < 0) baseLow1 += 24 * 60;
+    
+    let baseHigh1 = (baseLow1 + 382) % (24 * 60); // +6 ساعات و22 دقيقة
+    let baseLow2 = (baseHigh1 + 383) % (24 * 60);  // +6 ساعات و23 دقيقة
+    let baseHigh2 = (baseLow2 + 382) % (24 * 60);
 
     const formatTime = (minutes) => {
         let h = Math.floor(minutes / 60);
