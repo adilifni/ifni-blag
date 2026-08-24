@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحميل تطبيق طقس وبحر سيدي إفني</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 20px;
+            background-color: #0f172a; color: #f8fafc;
+            font-family: system-ui, -apple-system, sans-serif;
+            text-align: center; direction: rtl;
+        }
+        .card {
+            background-color: #1e293b; border: 1px solid #334155;
+            border-radius: 16px; padding: 24px; max-width: 450px; margin: 0 auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .icon { font-size: 50px; margin-bottom: 10px; }
+        h1 { color: #38bdf8; font-size: 1.5rem; margin-bottom: 8px; }
+        p { color: #94a3b8; font-size: 0.95rem; line-height: 1.5; }
+        .btn-download {
+            display: block; background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #ffffff; font-weight: bold; padding: 14px 20px;
+            border-radius: 10px; text-decoration: none; font-size: 1.1rem;
+            margin: 20px 0; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+        }
+        .features { text-align: right; background: #0f172a; padding: 15px; border-radius: 10px; margin-top: 15px; }
+        .features li { margin-bottom: 8px; color: #cbd5e1; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">🌊</div>
+        <h1>توقعات سيدي إفني</h1>
+        <p>التطبيق الخاص بالطقس، وحالة البحر، وسرعة الرياح بالعقدة، وحاسبة المد والجزر لسواحل سيدي إفني.</p>
+        
+        <a href="https://github.com/adilifni/ifni-weather/releases/download/v1.0.0/app-release.apk" class="btn-download">
+            📥 تحميل التطبيق APK (مجاناً)
+        </a>
+
+        <div class="features">
+            <h4 style="color:#38bdf8; margin-top:0;">مميزات التطبيق:</h4>
+            <ul>
+                <li>⚓ حاسبة المد والجزر الدقيقة بالدقائق.</li>
+                <li>💨 سرعة الرياح بوحدة العقدة (Knots).</li>
+                <li>🌊 ارتفاع وحركة الأمواج لمدة 7 أيام.</li>
+                <li>📡 إمكانية الاستخدام بدون إنترنت.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
