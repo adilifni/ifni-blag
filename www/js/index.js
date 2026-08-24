@@ -1,3 +1,6 @@
+const CURRENT_VERSION = "1.0.0"; // رقم الإصدار الحالي للتطبيق
+const VERSION_CHECK_URL = "https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/main/version.json";
+
 document.addEventListener('deviceready', init, false);
 if (!window.cordova) document.addEventListener('DOMContentLoaded', init);
 
@@ -13,7 +16,52 @@ function checkAndLoad() {
     } else {
         hideOfflineScreen();
         loadForecastData();
+        checkAppUpdate(); // فحص التحديثات عند فتح التطبيق
     }
+}
+
+function checkAppUpdate() {
+    fetch(VERSION_CHECK_URL + '?t=' + new Date().getTime()) // لمنع التخزين المؤقت
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.latestVersion) {
+                if (isNewerVersion(CURRENT_VERSION, data.latestVersion)) {
+                    showUpdatePopup(data.latestVersion, data.message, data.updateUrl, data.forceUpdate);
+                }
+            }
+        })
+        .catch(err => console.log("لم يتم جلب معلومات التحديث:", err));
+}
+
+// مقارنة أرقام الإصدارات (مثلاً 1.0.1 أكبر من 1.0.0)
+function isNewerVersion(current, latest) {
+    const cParts = current.split('.').map(Number);
+    const lParts = latest.split('.').map(Number);
+    for (let i = 0; i < Math.max(cParts.length, lParts.length); i++) {
+        const c = cParts[i] || 0;
+        const l = lParts[i] || 0;
+        if (l > c) return true;
+        if (l < c) return false;
+    }
+    return false;
+}
+
+function showUpdatePopup(version, message, url, force) {
+    if (document.getElementById('update-popup')) return;
+
+    const popupHtml = `
+        <div id="update-popup" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:9999; direction:rtl; font-family:sans-serif;">
+            <div style="background:#1e293b; border:1px solid #38bdf8; padding:20px; border-radius:12px; width:85%; max-width:350px; text-align:center; color:#fff;">
+                <h3 style="color:#38bdf8; margin-top:0;">🚀 تحديث جديد متوفر (${version})</h3>
+                <p style="color:#cbd5e1; font-size:0.95rem; line-height:1.5;">${message}</p>
+                <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+                    <a href="${url}" target="_blank" style="background:#0284c7; color:#fff; padding:10px 18px; border-radius:6px; text-decoration:none; font-weight:bold; flex:1;">تحديث الآن</a>
+                    ${!force ? `<button onclick="document.getElementById('update-popup').remove()" style="background:#475569; color:#fff; border:none; padding:10px 15px; border-radius:6px; cursor:pointer;">لاحقاً</button>` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', popupHtml);
 }
 
 function showOfflineScreen() {
@@ -116,17 +164,15 @@ function renderTideChart() {
     const svg = document.getElementById('tide-svg');
     if (!svg) return;
 
-    // حساب فرق الأيام انطلاقاً من مرجع يوم 23 غشت 2026 (الجزر الأول كان 5:25 أي 325 دقيقة)
     const now = new Date();
-    const refDate = new Date(2026, 7, 23); // 23 غشت 2026
+    const refDate = new Date(2026, 7, 23);
     const diffDays = Math.floor((now - refDate) / (1000 * 60 * 60 * 24));
     
-    // الدورة القمرية اليومية لـ سيدي إفني (50.5 دقيقة تأخير يومي)
     let baseLow1 = (5 * 60 + 25 + Math.round(diffDays * 50.5)) % (24 * 60);
     if (baseLow1 < 0) baseLow1 += 24 * 60;
     
-    let baseHigh1 = (baseLow1 + 382) % (24 * 60); // +6 ساعات و22 دقيقة
-    let baseLow2 = (baseHigh1 + 383) % (24 * 60);  // +6 ساعات و23 دقيقة
+    let baseHigh1 = (baseLow1 + 382) % (24 * 60);
+    let baseLow2 = (baseHigh1 + 383) % (24 * 60);
     let baseHigh2 = (baseLow2 + 382) % (24 * 60);
 
     const formatTime = (minutes) => {
